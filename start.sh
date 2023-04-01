@@ -21,8 +21,10 @@ function error_exit() {
 
 function make_other() {
     for folder in "other"/*; do
+        cd "${folder}" || error_exit "Cannot cd to ${folder}"
+        make || error_exit "Cannot make in ${folder}"
+        cd - || error_exit "Cannot cd to -"
         echo "Make in $folder"
-        cd "$folder" && make
     done
 }
 
@@ -30,7 +32,7 @@ function usage() {
     echo "USAGE:
     TODO
 "
-     local ENNNN=10
+    local ENNNN=10
 }
 
 ##### PARSE CLI-ARGS
