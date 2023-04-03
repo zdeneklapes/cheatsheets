@@ -18,11 +18,12 @@ function error_exit() {
     usage
     exit 1
 }
-
-function make_other() {
-    for folder in "other"/*; do
+function make_all() {
+    rm -rfd "pdfs" && mkdir "pdfs"
+    for folder in "rl"; do
         cd "${folder}" || error_exit "Cannot cd to ${folder}"
         make || error_exit "Cannot make in ${folder}"
+        cp out/*.pdf ../pdfs/${folder}.pdf || error_exit "Cannot copy pdfs"
         cd - || error_exit "Cannot cd to -"
         echo "Make in $folder"
     done
@@ -40,7 +41,7 @@ function usage() {
 while [ "$#" -gt 0 ]; do
     case "$1" in
     "-m" | "--make") make ;;
-    "-mo" | "--make-other") make_other ;;
+    "-ma" | "--make-all") make_all ;;
     "-h" | "--help" | *) usage ;;
     esac
     shift

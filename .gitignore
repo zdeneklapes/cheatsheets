@@ -2,8 +2,7 @@
 
 tags
 
-out/**
-!out/*.pdf
+**/out/**
 
 other/
 others/

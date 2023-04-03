@@ -1,4 +1,4 @@
-CO=rl_cheatsheet
+CO=main
 CMD_PDFLATEX=pdflatex
 CMD_BIBTEX=bibtex
 OUT_DIR=./out
