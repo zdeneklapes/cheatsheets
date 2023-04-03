@@ -1,5 +1,9 @@
 .idea/
 
-out/
+tags
+
+out/**
+!out/*.pdf
+
 other/
 others/

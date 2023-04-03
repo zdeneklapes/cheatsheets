@@ -4,7 +4,8 @@
 % \cmd[option]{arguments}
 
 % Preamble
-\documentclass[8pt, landscape]{article}
+\documentclass[10pt, landscape, a4paper]{article}
+\usepackage{definitions/rlcheatsheet}
 
 % Packages
 \usepackage{lmodern}
@@ -47,25 +48,9 @@
 % Macros
 \newboolean{darkmode}
 \setboolean{darkmode}{true}
+\newboolean{debug}
+\setboolean{debug}{true}
 
-% Definitions
-\newcommand{\lengthfromedge}{0.5cm}
-\newcommand{\textfontsize}{8pt}
-\makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{0mm}%
-{-1ex plus -.5ex minus -.2ex}%
-{0.5ex plus .2ex}%x
-{\normalfont\large\bfseries}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
-{-1explus -.5ex minus -.2ex}%
-{0.5ex plus .2ex}%
-{\normalfont\normalsize\bfseries}}
-\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
-{-1ex plus -.5ex minus -.2ex}%
-{1ex plus .2ex}%
-{\normalfont\small\bfseries}}
-\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
-\makeatother
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -84,13 +69,6 @@
 
 % Tikz
 \tikzset{
-    frame/.style={
-        rectangle, draw,
-%        text width=6em,
-        text centered,
-        minimum height=3em,drop shadow,fill=white,
-        rounded corners,
-    },
     line/.style={
         draw, -{Latex},rounded corners=3mm,
     },
@@ -107,10 +85,36 @@
     },
 }
 
+\ifthenelse{\boolean{darkmode}} {
+    \tikzset{
+        frame/.style={
+            rectangle,
+            draw,
+            text=black,
+            text centered,
+            minimum height=3em,drop shadow,fill=white,
+            rounded corners,
+        },
+    }
+}{
+    \tikzset{
+        frame/.style={
+            rectangle,
+            draw,
+            text centered,
+            minimum height=3em,drop shadow,fill=white,
+            rounded corners,
+        },
+    }
+}
+
+
 % Document
 \begin{document}
     \raggedright
     \fontsize{\textfontsize}{\textfontsize}\selectfont
+
+
 
     \begin{multicols}{3}
         % Multicols Setup
@@ -125,21 +129,23 @@
         \end{center}
 
         \section*{Summary of Notation}
-        Math styles:
-        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
-            $\mathbb{P}$     & \verb|\mathbb{P}|     \\
-            $\mathbf{P}$     & \verb|\mathbf{P}|     \\
-            $\mathtt{P}$     & \verb|\mathtt{P}|     \\
-            $\mathit{P}$     & \verb|\mathit{P}|     \\
-            $\mathcal{P}$    & \verb|\mathcal{P}|    \\
-            $\mathfrak{P}$   & \verb|\mathfrak{P}|   \\
-            $\mathnormal{P}$ & \verb|\mathnormal{P}| \\
-            $\bar{P}$        & \verb|\bar{P}|        \\
-            $\hat{P}$        & \verb|\hat{P}|        \\
-            $\tilde{P}$      & \verb|\tilde{P}|      \\
-            $\vec{P}$        & \verb|\vec{P}|        \\
-            $\overline{P}$   & \verb|\overline{P}|   \\
-        \end{tabular}
+        \ifthenelse{\boolean{debug}} {
+            Math styles:
+            \begin{align*}
+                \mathbb{P}     &\qquad \text{\textbackslash mathbb\{P\}}     \\
+                \mathbf{P}     &\qquad \text{\textbackslash mathbf\{P\}}     \\
+                \mathtt{P}     &\qquad \text{\textbackslash mathtt\{P\}}     \\
+                \mathit{P}     &\qquad \text{\textbackslash mathit\{P\}}     \\
+                \mathcal{P}    &\qquad \text{\textbackslash mathcal\{P\}}    \\
+                \mathfrak{P}   &\qquad \text{\textbackslash mathfrak\{P\}}   \\
+                \mathnormal{P} &\qquad \text{\textbackslash mathnormal\{P\}} \\
+                \bar{P}        &\qquad \text{\textbackslash bar\{P\}}        \\
+                \hat{P}        &\qquad \text{\textbackslash hat\{P\}}        \\
+                \tilde{P}      &\qquad \text{\textbackslash tilde\{P\}}      \\
+                \vec{P}        &\qquad \text{\textbackslash vec\{P\}}        \\
+                \overline{P}   &\qquad \text{\textbackslash overline\{P\}}   \\
+            \end{align*}
+        } {}
 
         \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
             $\doteq$                                 & equality relationship that is true by definition                                          \\
@@ -256,9 +262,51 @@
             $\vb{z}_t$           & $d$-vector of eligibility traces at tim $t$                                                                              \\
         \end{tabular}
 
-%        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
-%            TODO
-%        \end{tabular}
+        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
+            $\Theta$, $\Theta$       & parameter vector of target policy                                                  \\
+            $\pi(a|s,\Theta)$        & probability of taking action $a$ in state $s$ given parameter vector $\Theta$      \\
+            $\pi_{\Theta}$           & policy corresponding to parameter vector $\Theta$                                  \\
+            $\nabla \pi(a|s,\Theta)$ & columb vector of partial derivatives of $\pi(a|s,\Theta)$ with respect to $\Theta$ \\
+            $J(\Theta)$              & performance measure for th epolicy $\pi_\Theta$                                    \\
+            $\nabla J(\Theta)$       & column vector of partial derivatives of $J(\Theta)$ with respect to $\Theta$       \\
+            $h(s,a,\Theta)$          & preference for selecting action $a$ in state $s$ based on $\Theta$                 \\
+        \end{tabular}
+
+        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
+            $b(a|s)$     & behavior of policy used to select actions while learning about target policy $\pi$ \\
+            $b(s)$       & a baseline function $g: \mathcal{S} \mapsto \mathbb{R}$                            \\
+            $b$          & brnahcing factor for an MDP or search tree                                         \\
+            $\rho_{t:h}$ & importance sapling ratio for time $t$ through time $h$                             \\
+            $\rho_t$     & importance sampling ratio for time $t$ alone, $\rho\doteq \rho_{t:t}$              \\
+            $r(\pi)$     & average reward (reward rate) for policy $\pi$                                      \\
+            $\bar{R}_t$  & estimate of $r(\pi)$ at time $t$                                                   \\
+        \end{tabular}
+
+        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
+            $\mu(s)$      & on-policy distribution over states                                                                              \\
+            $\vb{\mu}$    & $|\mathcal{S}|$-vector of the $\mu(s)$ for all $s\in\mathcal{S}$                                                \\
+            $||v||_\mu^2$ & $\mu$-weighted squared norm of value function $v$,i.e. $||v||_\mu^2\doteq \sum_{s\in\mathcal{S}} \mu(s) v(s)^2$ \\
+            $\eta(s)$     & expected number of visits to state $s$ per episode                                                              \\
+            $\Pi$         & projection operator for value functions                                                                         \\
+            $B_\pi$       & Bellman operator for value functions                                                                            \\
+            $\vb{A}$      & $d\times d$ matrix $\vb{A}\doteq\mathbb{E} \left[\vb{x}(\vb{x}_t- \gamma\vb{x}_{t+1})^\top\right]$              \\
+            $\vb{b}$      & $d$-dimensional vector $\vb{b}\doteq\mathbb{E}\left[R_{t+1}\vb{x}_t\right]$                                     \\
+            $\vb{w}_{TD}$ & TD fixed point $\vb{w}_{TD}\doteq\vb{A}^{-1}\vb{b}$ (a $d$-vector)                                              \\
+            $\vb{I}$      & identity matrix                                                                                                 \\
+            $\vb{P}$      & $|\mathcal{S}| \times |\mathcal{S}|$ matrix of state transition probabilities under $\pi$                       \\
+            $\vb{D}$      & $|\mathcal{S}| \times |\mathcal{S}|$ diagonal matrix with $\vb{\mu}$ on its diagonal                            \\
+            $\vb{X}$      & $|\vb{S}|\times d$ matrix with the $\vb{x}(s)$ as its rows                                                      \\
+        \end{tabular}
+
+        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
+            $\bar{\delta}(s)$       & Bellmann error (expected TD error) for $v_{\vb{w}}$ at state s                                 \\
+            $\bar{\delta}(s)$, $BE$ & Bellmann error vector, with components $\delta_{\vb{w}}(s)$                                    \\
+            $\bar{VE}(\vb{w})$      & mean square value error $\bar{VE}(\vb{w})\doteq||v_{vb{w}} - v_\pi||_\mu^2$                    \\
+            $\bar{BE}(\vb{w})$      & mean square Bellman error $\bar{BE}(\vb{w})\doteq||\bar{\delta}_{\vb{w}}||_\mu^2$              \\
+            $\bar{PBE}(\vb{w})$     & mean square projected Bellman error $\bar{PBE}(\vb{w})\doteq||\bar{\delta}_{\vb{w}}||_\mu^2$   \\
+            $\bar{TDE}(\vb{w})$     & mean square temporal difference error $\bar{TDE}(\vb{w})\doteq||\bar{\delta}_{\vb{w}}||_\mu^2$ \\
+            $\bar{RE}(\vb{w})$      & mean square return error $\bar{RE}(\vb{w})\doteq||\bar{\delta}_{\vb{w}}||_\mu^2$               \\
+        \end{tabular}
     \end{multicols}
 
     \newpage
@@ -285,6 +333,9 @@
 
 
         \section{Multi-armed Bandits}
+        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
+            $q_{*}(a)\doteq\mathbb{E}\left[T_t|A_t=a\right]$ & value of action\\
+        \end{tabular}
 
 
         \section{Finite Markov Decision Process}
@@ -348,6 +399,21 @@
 
 
         \section{Neuroscience}
+
+        \subsection{Neuroscience Basics}
+        TODO
+
+        \subsection{Reward Signals, Reinforcement Signals, Values and Prediction Errors}
+
+        \subsubsection{Reward Signals}
+        In reinforcement learning reward \textbf{defines the problem a reinforcement learning agent is trying to solve}.
+
+        \subsubsection{Reinforcement Signals}
+        Reinforcement signals in reinforcement learning are are different from reward signals.
+        \textbf{The function of a reinforcement signal is to direct the changes a learning algorithm makes in an agent's policy}, value estimates, or envirnment models.
+        e.g.:
+        TD error (TD method):
+        $\delta_{t-1}=R_t+\gamma V(S_t)-V(S_{t-1})$
 
 
         \section{Application and case studies}
