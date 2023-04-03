@@ -386,12 +386,44 @@
         \subsection{Optimistic Initial Values}
         Intialize all $Q_1(a)$ to a value greater than the maximum possible reward.
         Initial optimistic $\Rightarrow$ more exploration.
-        $\bar{o}_n=\bar{o}_{n+1}+\alpha(1-\bar{o}_{n-1})$
+
         \begin{equation}
-            \beta_n = \begin{cases*}
-                          \frac{\alpha}{\bar{o}_n}, & if $ n > 0 $,\\
-                          0, & else
+            \beta_n =
+            \begin{cases*}
+                \frac{\alpha}{\bar{o}_n}, & if $ n > 0 $,\\
+                0, & else
             \end{cases*}
+        \end{equation}
+        \begin{equation}
+            \bar{o}_n=\bar{o}_{n+1}+\alpha(1-\bar{o}_{n-1})
+        \end{equation}
+
+        \subsection{Upper-Confidence-Bound Action Selection}
+        \begin{equation}
+            A_t = \argmax_{a} \left[ Q_t(a) + c \cdot \sqrt{\frac{\ln t}{N_t(a)}} \right]
+        \end{equation}
+
+        \subsection{Gradient Bandit Algorithms}
+
+        \subsubsection{Softmax}
+        \begin{equation}
+            \begin{split}
+                \pi_t(a) &= \frac{\exp \left( H_t(a) \right)}{\sum_{b} \exp \left( H_t(b) \right)} \\
+                \pi_t(a) &= \frac{\exp \left( H_t(a) \right)}{\exp \left( H_t(a) \right) + \exp \left( H_t(b) \right)} \\
+            \end{split}
+        \end{equation}
+
+        \subsubsection{Action Preference}
+        \begin{equation}
+            \begin{split}
+                H_t(a) &= \sum_{i=1}^{t-1} \mathds{1}_{A_i=a} \cdot \left( R_i - \bar{R}_t \right) \\
+            \end{split}
+        \end{equation}
+        \begin{equation}
+            \begin{split}
+                H_{t+1}(A_t) &= H_t(A_t) + \alpha \cdot \left( R_t - \bar{R}_t \right) \cdot (1-\pi_{t}(A-t))\\
+                H_{t+1}(a) &= H_t(a) - \alpha \cdot \left( R_t - \bar{R}_t \right) \cdot \pi_t(a) \\
+            \end{split}
         \end{equation}
 
 
