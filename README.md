@@ -1,11 +1,6 @@
-# Reinforcement Learning Cheatsheet
+# Cheatsheets
 
-### Plan:
-
-- 3 versions:
-- Equations with explanations and code snippets
-
-### Inspired by:
+### RL Inspired by:
 
 - [rl-cheatsheet](https://github.com/udacity/rl-cheatsheet) by udacity
 - [rl-cheatsheet](https://github.com/alxthm/rl-cheatsheet) by alxthm
