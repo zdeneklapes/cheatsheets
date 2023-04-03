@@ -498,6 +498,7 @@
         \end{equation}
 
         \subsection{Value Functions}
+
         \subsubsection{State-Value Functions}
         Can be used to get policy $\pi$.
         \begin{equation}
@@ -517,6 +518,7 @@
         \end{equation}
 
         \subsection{Optimal Value Function}
+
         \subsubsection{Optimal State-Value Function}
         \begin{equation}
             \begin{split}
@@ -533,8 +535,82 @@
             \end{split}
         \end{equation}
 
+        \newpage
+
 
         \section{Dynamic Programming}
+        If the environment's dynamic is completely known, the Eq. \ref{eq:v_bellman} is a system of $|\mathcal{S}|$ equations in  $|\mathcal{S}|$ unknowns ($v_\pi(s), s \in \mathcal{S}$). \\
+        We also can use an iterative solution,  $\forall s \in \mathcal{S}$:
+        \begin{align*}
+            v_{k+1}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[R_{t+1} + \gamma v_{k}(S_{t+1}) | S_t = s] \\
+            & = \sum_{a} \pi(a|s) \sum_{s' ,r} p(s',r | s, a)  [r + \gamma v_{k}(s')] \numberthis  \quad [4.5]
+        \end{align*}
+        We can compute new values $v_{k+1}(s)$ from old values $v_k(s)$ without change old values or update the values \emph{in-place}.
+
+        \subsubsection{Iterative Policy Evaluation for estimating $V \sim v_{\pi}$ (in-place version)}
+        \begin{algorithm}[H]
+            Inputs: $\pi$ - the policy to be evaluated \\
+            Params: $\theta$ - a small positive threshold determining the accuracy of the estimation \\
+            Initialize V(s), for all $s \in \mathcal{S}^{+}$ arbitrarily, except V(terminal) = 0\\
+            $\Delta \leftarrow 0$ \\
+            \While{$\Delta \ge \theta$}
+            {
+                \ForEach{$s \in S$} {
+                    $v \leftarrow V(s)$\\
+                    $V(s) \leftarrow \sum\limits_a \pi(a|s) \sum\limits_{s', r} p(s',r | s, a) \begin{bmatrix}
+                                                                                                   r + \gamma V(s')
+                    \end{bmatrix}$ \\
+                    $\Delta \leftarrow \max(\Delta, | v - V(s)|)$
+                }
+            }
+            \caption{Iterative Policy Evaluation - estimating $V \sim v_{\pi}$ - [§4.1]}
+        \end{algorithm}
+
+        The algorithm tests the quantity $\max_{s \in \mathcal{S}} |v_{k+1}(s) - v_k(s)|$ after each \emph{sweep} and stops when it is sufficiently small ($\Delta < \theta$).
+%\vfill\null
+%\columnbreak
+
+        \subsection{Policy Iteration}
+        Policy iteration consists of two simultaneous, interacting processes: one making the value function consistent with the current policy (\emph{policy evaluation}), and the other making the policy greedy with respect to the current value function (\emph{policy improvement}).
+        \begin{algorithm}[H]
+%\SetAlgoLined
+            1. Initialization \\
+            Assign arbitrarily $V(s) \in \mathbb{R}$ and $\pi(s) \in \mathcal{A}(s)$  for all $s \in S$,\\
+            2. Policy Evaluation \\
+            $\Delta \leftarrow 0$ \\
+            \While{$\Delta \ge \theta$}
+            {
+                \ForEach{$s \in S$} {
+                    $v \leftarrow V(s)$\\
+                    $V(s) \leftarrow \sum\limits_a \pi(a|s) \sum\limits_{s', r} p(s',r | s, a) \begin{bmatrix}
+                                                                                                   r + \gamma V(s')
+                    \end{bmatrix}$ \\
+                    $\Delta \leftarrow \max(\Delta, | v - V(s)|)$
+                }
+            }
+            3. Policy Improvement \\
+            \emph{policy-stable} $ \leftarrow $ \emph{true} \\
+            \ForEach{$s \in S$} {
+                \emph{old-action} $\leftarrow \pi(s)$\\
+                $\pi(s) \leftarrow \argmax\limits_a\sum\limits_{s', r} p(s',r | s, a)  \begin{bmatrix}
+                                                                                           r + \gamma V(s')
+                \end{bmatrix}$ \\
+                \If{\emph{old-action} $\neq \pi(s)$}
+                {
+                    \emph{policy-stable} $\leftarrow$ \emph{false}
+                }
+            }
+            \uIf{\emph{policy-stable}}
+            {
+                return V $\approx v_*$ and $\pi \approx \pi_*$
+            }
+            \Else
+            {
+                go to 2
+            }
+
+            \caption{Policy Iteration - estimating $\pi \sim \pi_*$ - deterministic policy - [§4.3]}
+        \end{algorithm}
 
 
         \section{Monte Carlo Methods}
