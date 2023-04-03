@@ -44,6 +44,7 @@
 \usepackage{xcolor}
 \usepackage{pagecolor}
 \usepackage{etoolbox}
+\usepackage{tabularx}
 
 % Macros
 \newboolean{darkmode}
@@ -113,8 +114,6 @@
 \begin{document}
     \raggedright
     \fontsize{\textfontsize}{\textfontsize}\selectfont
-
-
 
     \begin{multicols}{3}
         % Multicols Setup
@@ -333,9 +332,67 @@
 
 
         \section{Multi-armed Bandits}
-        \begin{tabular}{ p{0.2\columnwidth} p{0.7\columnwidth} }
-            $q_{*}(a)\doteq\mathbb{E}\left[T_t|A_t=a\right]$ & value of action\\
+        \begin{tabularx}{\columnwidth}{ X c }
+            $q_{*}(a) \doteq \mathbb{E}\left[R_t|A_t=a\right]$                                                    & Value of Action                   \\
+            $Q_{*}(a) \doteq \frac{\sum_{i=1}^{t-1} R_i \mathds{1}_{A_i=a}}{\sum_{i=1}^{t-1} \mathds{1}_{A_i=a}}$ & Average Reward, for \underline{a}\\
+        \end{tabularx}
+%        \begin{tabularx}{\linewidth}{ X l }
+%            $q_{*}(a) \doteq \mathbb{E}\left[R_t|A_t=a\right]$ & Value of Action \\
+%            $Q_{*}(a) \doteq \frac{\sum_{i=1}^{t-1} R_i \mathds{1}_{A_i=a}}{\sum_{i=1}^{t-1} \mathds{1}_{A_i=a}}$ & Average Reward, for \underline{a}\\
+%            A & B \\
+%            {\begin{align}
+%                   A &= B \\
+%                   C &= D \end{align}} &
+%        \end{tabularx}
+%
+
+        \subsection{Action Selection}
+
+        \subsubsection{Greedy}
+        \begin{equation}
+            A_{t} = \argmax_{a} Q_t(a)
+        \end{equation}
+
+        \subsubsection{$\epsilon$-Greedy ($\epsilon\in\left[ 0,1 \right]$)}
+        Define how often to take a random action, instead of the greedy action.
+
+        \subsection{Environments}
+        \begin{tabular}{ c l }
+            stationary     & the environment does not change over time \\
+            non-stationary & the environment changes over time         \\
         \end{tabular}
+
+        \subsection{Incremental Implementation}
+        \begin{equation}
+            \begin{split}
+                Q_{new} &= Q_{old} + StepSize \cdot \left[ Target - Q_{old} \right] \\
+                Q_{n+1} &= Q_n + \alpha \cdot \left[ R_n - Q_n \right]
+            \end{split}
+        \end{equation}
+
+        \subsection{Tracking a non-stationary problem}
+        \begin{equation}
+            \begin{split}
+                Q_{n+1} &= (1-\alpha)^n \cdot Q_1 + \sum_{i=1}^{n} (1-\alpha)^{n-1} \cdot R_i \\
+            \end{split}
+        \end{equation}
+
+        \subsubsection{Rules}
+        \begin{tabular}{ c l }
+            $\sum_{n=1}^\infty \alpha_n(a) = \infty$   & Fluctuation \\
+            $\sum_{n=1}^\infty \alpha_n(a)^2 < \infty$ & Convergence \\
+        \end{tabular}
+
+        \subsection{Optimistic Initial Values}
+        Intialize all $Q_1(a)$ to a value greater than the maximum possible reward.
+        Initial optimistic $\Rightarrow$ more exploration.
+        $\bar{o}_n=\bar{o}_{n+1}+\alpha(1-\bar{o}_{n-1})$
+        \begin{equation}
+            \beta_n = \begin{cases*}
+                          \frac{\alpha}{\bar{o}_n}, & if $ n > 0 $,\\
+                          0, & else
+            \end{cases*}
+        \end{equation}
 
 
         \section{Finite Markov Decision Process}
